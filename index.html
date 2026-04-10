@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+  <meta charset="UTF-8">
+  <title>Trips-Traps-Trull</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    #status {
+      margin: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border: 2px solid #333;
+      font-size: 2.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cell:hover {
+      background: #ddd;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Trips-Traps-Trull</h1>
+<div id="status">Mängija X kord</div>
+
+<div class="board">
+  <div class="cell" data-index="0"></div>
+  <div class="cell" data-index="1"></div>
+  <div class="cell" data-index="2"></div>
+  <div class="cell" data-index="3"></div>
+  <div class="cell" data-index="4"></div>
+  <div class="cell" data-index="5"></div>
+  <div class="cell" data-index="6"></div>
+  <div class="cell" data-index="7"></div>
+  <div class="cell" data-index="8"></div>
+</div>
+
+<button onclick="resetGame()">Alusta uuesti</button>
+
+<script>
+  const cells = document.querySelectorAll(".cell");
+  const statusText = document.getElementById("status");
+
+  let board = ["", "", "", "", "", "", "", "", ""];
+  let currentPlayer = "X";
+  let gameActive = true;
+
+  const winPatterns = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  cells.forEach(cell => cell.addEventListener("click", handleClick));
+
+  function handleClick() {
+    const index = this.getAttribute("data-index");
+
+    if (board[index] !== "" || !gameActive) return;
+
+    board[index] = currentPlayer;
+    this.textContent = currentPlayer;
+
+    checkWinner();
+  }
+
+  function checkWinner() {
+    let won = false;
+
+    for (let pattern of winPatterns) {
+      const [a, b, c] = pattern;
+
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        won = true;
+        break;
+      }
+    }
+
+    if (won) {
+      statusText.textContent = "Mängija " + currentPlayer + " võitis!";
+      gameActive = false;
+      return;
+    }
+
+    if (!board.includes("")) {
+      statusText.textContent = "Viik!";
+      gameActive = false;
+      return;
+    }
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    statusText.textContent = "Mängija " + currentPlayer + " kord";
+  }
+
+  function resetGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    currentPlayer = "X";
+    gameActive = true;
+    statusText.textContent = "Mängija X kord";
+
+    cells.forEach(cell => cell.textContent = "");
+  }
+</script>
+
+</body>
+</html>
